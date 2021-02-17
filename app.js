@@ -1,7 +1,8 @@
 const express = require("express")
+const { fstat } = require("fs")
 const app = express()
 const path = require('path')
-
+const fs  = require('fs')
 
 //to use ejs .agar dastor render gerefi
 //view ha ro az inja read kon. agar dastor render gerfti
@@ -37,6 +38,34 @@ app.get('/about',(req,res)=>{
         }
 })
 })
+
+
+//////////////////////
+// app.get('/user/:id/:page',(req,res)=>{
+//     console.log(req.params);
+//     res.send(req.params.id)
+// })
+////////////////////////
+app.get('/user/:id/',(req,res)=>{
+    // console.log(req.params);
+    // res.send(req.params.id)
+    fs.readFile(path.join(__dirname,"public/users.json"),'utf8',(err,data)=>{
+        if(err) return res.status(404).send("something went wrong")
+    //elemani ro find mikonim ke id oon barabar req.params.id
+    data = JSON.parse(data)
+    // console.log(req.params);
+    // console.log(data);
+
+    user = data.find(x => x.id ==req.params.id)
+    // agar user naabod
+    if(!user) return res.status(404).send("user not found")
+
+    console.log(user);
+
+    res.render('pages/home',data)
+})
+})
+
 
 
 app.listen(5005)
